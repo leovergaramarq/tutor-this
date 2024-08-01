@@ -1,0 +1,43 @@
+{
+    "manifest_version": 3,
+    "name": "Tutor This",
+    "version": "1.0.0",
+    "description": "Quick assistant for Tutor.com workers who want to check their performance.",
+    "icons": {
+        "16": "./assets/images/logo-circ-16.png",
+        "48": "./assets/images/logo-circ-48.png",
+        "128": "./assets/images/logo-circ-128.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://prv.tutor.com/nGEN/Apps/SocWinSupportingPages/Provider/BillingInfo.aspx?ProgramGUID=b611858b-4d02-4afe-8053-d082bbc1c58e"
+            ],
+            "js": [
+                "contentScript.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": false
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "resources": [
+                "constants.js"
+            ]
+        }
+    ]
+}
