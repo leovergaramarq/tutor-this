@@ -149,7 +149,7 @@ input[type="checkbox"] + label {
 input[type="checkbox"] + label::before {
     content: "";
     position: absolute;
-    left: 6px;
+    left: 3px;
     top: -8px;
     width: 14px;
     height: 14px;
@@ -167,7 +167,7 @@ input[type="checkbox"]:checked + label::before {
 input[type="checkbox"]:checked + label::after {
     content: "";
     position: absolute;
-    left: 12px;
+    left: 9px;
     top: -5px;
     width: 3px;
     height: 6px;

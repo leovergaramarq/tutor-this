@@ -133,7 +133,7 @@ function setupSavedData() {
     const lowSeasonString = localStorage.getItem("lowSeason");
     lowSeason =
         lowSeasonString !== null
-            ? lowSeason === "true"
+            ? lowSeasonString === "true"
                 ? true
                 : false
             : DEFAULT_LOW_SEASON;
@@ -150,10 +150,13 @@ function handleCustomAreaChange(e) {
         currency = Array.from($currency.children).find(
             ($option) => $option.selected
         ).value;
+        localStorage.setItem("currency", currency);
     } else if (e.target === $usdPerHour) {
         usdPerHour = +$usdPerHour.value;
+        localStorage.setItem("usdPerHour", usdPerHour);
     } else if (e.target === $lowSeason) {
         lowSeason = $lowSeason.checked;
+        localStorage.setItem("lowSeason", lowSeason);
     }
 
     renderBillingInfo();
@@ -180,17 +183,6 @@ function handleResetData() {
     renderBillingInfo();
 }
 
-function storeData(data) {
-    localStorage.setItem("data", JSON.stringify(data));
-}
-
-function getSelectedCurrency() {
-    const $options = Array.from($currency.children);
-    const $sel = $options.find(($op) => $op.getAttribute("selected"));
-
-    return $sel.getAttribute("value");
-}
-
 function renderCurrencyOptions(currencyRates) {
     $currency.innerHTML = "";
     const $fragment = document.createDocumentFragment();
@@ -208,9 +200,9 @@ function renderCurrencyOptions(currencyRates) {
 
 function setCustomValues(renderCurrency = true) {
     const { minutesWaiting, minutesInSession, scheduledHours, onlineHours } =
-        billingInfo[1];
+        billingInfo[0];
 
-    renderCurrencyOptions(currencyRates);
+    if (renderCurrency) renderCurrencyOptions(currencyRates);
     $scheduledHours.value = scheduledHours;
     $onlineHours.value = onlineHours;
     $minutesWaiting.value = minutesWaiting;
