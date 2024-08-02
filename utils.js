@@ -9,3 +9,8 @@ export function hasAncestor(element, ancestor, stopNode) {
     }
     return false;
 }
+
+// https://stackoverflow.com/a/2901298/20250972
+export function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

@@ -10,8 +10,8 @@
     --black-2: #333333;
     --blue-1: #0086fe;
     --blue-2: #1e90ff;
-    --blue-3: #568ff4;
-    --blue-4: #4d81dc;
+    --blue-3: #4b85e8;
+    --blue-4: #568dee;
     --blue-dark-1: #1b1b23;
     --gray-blue-1: #323543;
     --gray-blue-2: #4b4f64;
@@ -76,7 +76,7 @@ input[type="number"] {
     border: 1px solid var(--color-util-1);
     border-radius: 2px;
     font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.2s;
 }
 
 input[type="text"]:focus,
@@ -94,13 +94,53 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+input[type="checkbox"] + label::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: -8px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--gray-2);
+    border-radius: 2px;
+    background-color: var(--whitish-1);
+    transition: all 0.2s;
+}
+
+input[type="checkbox"]:checked + label::before {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+input[type="checkbox"]:checked + label::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: -5px;
+    width: 3px;
+    height: 6px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
 select {
     width: 100%;
     padding: 2px 4px;
     border: 1px solid var(--color-util-1);
     border-radius: 2px;
     font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.2s;
 }
 
 select:focus {
@@ -116,15 +156,15 @@ select:focus {
     overflow: hidden auto;
 }
 
-main {
+/* main {
     color: var(--color-text-1);
-}
+} */
 
 section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
 }
 
 .section-title {
@@ -136,12 +176,20 @@ section {
 } */
 
 .section-payment {
-    .payment-value {
-        font-size: 1.5rem;
-    }
+    .section-data {
+        position: relative;
 
-    .payment-currency {
-        font-size: 1rem;
+        .payment-value {
+            font-size: 1.75rem;
+        }
+
+        .payment-currency {
+            font-size: 0.9rem;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            transform: translateX(100%);
+        }
     }
 }
 
@@ -182,6 +230,10 @@ section {
                 max-width: 64px;
             }
         }
+
+        .custom-field.low-season {
+            margin-top: 4px;
+        }
     }
 }
 
@@ -196,7 +248,8 @@ section {
         padding: 8px 16px;
 
         &:hover {
-            background-color: var(--color-bg-3);
+            background-color: var(--color-bg-5);
+            filter: brightness(115%);
         }
 
         div {

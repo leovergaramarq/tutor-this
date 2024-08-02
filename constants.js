@@ -4,3 +4,4 @@ export const THEME_DARK = "dark";
 export const THEME_LIGHT = "light";
 export const DEFAULT_CURRENCY = "COP";
 export const DEFAULT_USD_PER_HOUR = 7.5;
+export const DEFAULT_LOW_SEASON = false;
