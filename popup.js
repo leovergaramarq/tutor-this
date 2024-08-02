@@ -21,10 +21,10 @@ window.addEventListener("DOMContentLoaded", async () => {
             fetchCurrencyRates()
         ]);
 
-        const billingInfo = result[0];
+        billingInfo = result[0];
         currencyRates = result[1];
 
-        setCustomValues(billingInfo);
+        setCustomValues();
         renderBillingInfo();
     }
 });
@@ -122,6 +122,9 @@ function setupEvents() {
         if (hasAncestor(e.target, $optionReset)) handleResetData();
         else if (hasAncestor(e.target, $optionTheme)) handleToggleTheme();
     });
+    document
+        .querySelector(".custom-area")
+        .addEventListener("change", handleCustomAreaChange);
 }
 
 function setupSavedData() {
@@ -142,6 +145,20 @@ function handleToggleTheme() {
     localStorage.setItem("theme", theme);
 }
 
+function handleCustomAreaChange(e) {
+    if (e.target === $currency) {
+        currency = Array.from($currency.children).find(
+            ($option) => $option.selected
+        ).value;
+    } else if (e.target === $usdPerHour) {
+        usdPerHour = +$usdPerHour.value;
+    } else if (e.target === $lowSeason) {
+        lowSeason = $lowSeason.checked;
+    }
+
+    renderBillingInfo();
+}
+
 function renderTheme() {
     document.body.setAttribute("theme", theme);
 
@@ -158,7 +175,10 @@ function getOppositeTheme(theme) {
     return theme === THEME_DARK ? THEME_LIGHT : THEME_DARK;
 }
 
-function handleResetData() {}
+function handleResetData() {
+    setCustomValues(false);
+    renderBillingInfo();
+}
 
 function storeData(data) {
     localStorage.setItem("data", JSON.stringify(data));
@@ -171,7 +191,7 @@ function getSelectedCurrency() {
     return $sel.getAttribute("value");
 }
 
-function setCurrencyOptions(currencyRates) {
+function renderCurrencyOptions(currencyRates) {
     $currency.innerHTML = "";
     const $fragment = document.createDocumentFragment();
 
@@ -186,24 +206,24 @@ function setCurrencyOptions(currencyRates) {
     $currency.appendChild($fragment);
 }
 
-function setCustomValues(billingInfo) {
+function setCustomValues(renderCurrency = true) {
     const { minutesWaiting, minutesInSession, scheduledHours, onlineHours } =
         billingInfo[1];
 
-    setCurrencyOptions(currencyRates);
-    $scheduledHours.setAttribute("value", scheduledHours);
-    $onlineHours.setAttribute("value", onlineHours);
-    $minutesWaiting.setAttribute("value", minutesWaiting);
-    $minutesInSession.setAttribute("value", minutesInSession);
-    $usdPerHour.setAttribute("value", usdPerHour);
-    $lowSeason.checked = lowSeason || undefined;
+    renderCurrencyOptions(currencyRates);
+    $scheduledHours.value = scheduledHours;
+    $onlineHours.value = onlineHours;
+    $minutesWaiting.value = minutesWaiting;
+    $minutesInSession.value = minutesInSession;
+    $usdPerHour.value = usdPerHour;
+    $lowSeason.checked = lowSeason;
 }
 
 function renderBillingInfo() {
-    const scheduledHours = +$scheduledHours.getAttribute("value");
-    const onlineHours = +$onlineHours.getAttribute("value");
-    const minutesWaiting = +$minutesWaiting.getAttribute("value");
-    const minutesInSession = +$minutesInSession.getAttribute("value");
+    const scheduledHours = +$scheduledHours.value;
+    const onlineHours = +$onlineHours.value;
+    const minutesWaiting = +$minutesWaiting.value;
+    const minutesInSession = +$minutesInSession.value;
     const bonus = getBonus(minutesWaiting, minutesInSession);
 
     $paymentValue.textContent = numberWithCommas(
@@ -214,10 +234,12 @@ function renderBillingInfo() {
         ).toFixed(1)
     );
     $paymentUnits.textContent = currency;
+
     $onlineTimeValue.textContent = (
         (onlineHours / scheduledHours) *
         100
     ).toFixed(1);
+
     $timeWorkedValue.textContent = (
         (minutesInSession + minutesWaiting) /
         60
@@ -248,6 +270,7 @@ let theme;
 let currency;
 let usdPerHour;
 let lowSeason;
+let billingInfo;
 let currencyRates;
 
 const $paymentValue = document.querySelector(".section-payment .payment-value");

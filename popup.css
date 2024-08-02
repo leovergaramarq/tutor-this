@@ -1,3 +1,31 @@
+@font-face {
+    font-family: "Poppins";
+    src: url("assets/fonts/Poppins/Poppins-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("assets/fonts/Poppins/Poppins-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("assets/fonts/Poppins/Poppins-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("assets/fonts/Poppins/Poppins-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
 :root {
     --white: #fff;
     --whitish-1: #fafafa;
@@ -5,6 +33,7 @@
     --whitish-3: #e0e0e0;
     --gray-1: #cfcfcf;
     --gray-2: #aeaeae;
+    --gray-3: #5e5e5e;
     --black: #000;
     --black-1: #1e1e1e;
     --black-2: #333333;
@@ -12,7 +41,7 @@
     --blue-2: #1e90ff;
     --blue-3: #4b85e8;
     --blue-4: #568dee;
-    --blue-5: #e5eaf0;
+    --blue-5: #eef3f9;
     --blue-dark-1: #1b1b23;
     --gray-blue-1: #323543;
     --gray-blue-2: #4b4f64;
@@ -26,9 +55,10 @@
 
 body[theme="light"] {
     --color-primary: var(--blue-1);
+    --color-secondary: var(--blue-3);
     --color-bg-1: var(--whitish-1);
     --color-bg-2: var(--blue-5);
-    --color-bg-3: var(--blue-4);
+    --color-bg-3: var(--whitish-1);
     --color-bg-4: var(--gray-1);
     --color-bg-5: var(--blue-3);
     --color-bg-6: var(--whitish-1);
@@ -40,15 +70,16 @@ body[theme="light"] {
 
 body[theme="dark"] {
     --color-primary: var(--blue-1);
+    --color-secondary: var(--blue-3);
     --color-bg-1: var(--blue-dark-1);
     --color-bg-2: var(--blue-dark-1);
-    --color-bg-3: var(--gray-blue-1);
+    --color-bg-3: var(--gray-3);
     --color-bg-4: var(--gray-blue-2);
     --color-bg-5: var(--gray-blue-2);
     --color-bg-6: var(--black-2);
     --color-text-1: var(--whitish-2);
     --color-text-2: var(--whitish-1);
-    --color-util-1: var(--gray-1);
+    --color-util-1: #ffffff00;
     --color-util-2: var(--whitish-2);
 }
 
@@ -60,8 +91,9 @@ body {
         var(--color-bg-2) 100%
     );
     color: var(--color-text-2);
-    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-        "Lucida Sans", Arial, sans-serif;
+    /* font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif; */
+    font-family: "Poppins", serif;
 }
 
 /* https://stackoverflow.com/a/2310809/20250972 */
@@ -84,6 +116,8 @@ input[type="number"] {
     border: 1px solid var(--color-util-1);
     border-radius: 2px;
     font-size: 1rem;
+    background-color: var(--color-bg-3);
+    color: var(--color-text-2);
     transition: all 0.2s;
 }
 
@@ -121,7 +155,7 @@ input[type="checkbox"] + label::before {
     height: 14px;
     border: 1px solid var(--gray-2);
     border-radius: 2px;
-    background-color: var(--whitish-1);
+    background-color: var(--color-bg-3);
     transition: all 0.2s;
 }
 
@@ -148,6 +182,8 @@ select {
     border: 1px solid var(--color-util-1);
     border-radius: 2px;
     font-size: 1rem;
+    background-color: var(--color-bg-3);
+    color: var(--color-text-2);
     transition: all 0.2s;
 }
 
@@ -159,7 +195,7 @@ select:focus {
 
 .container {
     padding: 36px 24px 12px 24px;
-    max-height: 600px;
+    max-height: 500px;
     min-width: 256px;
     overflow: hidden auto;
 }
@@ -192,6 +228,8 @@ section {
 
         .section-data__value {
             font-size: 1.75rem;
+            font-weight: 500;
+            color: var(--color-secondary);
         }
 
         .section-data__units {
@@ -208,7 +246,8 @@ section {
     margin-top: 16px;
 
     .custom-area__title {
-        font-size: 0.9rem;
+        font-size: 1rem;
+        font-weight: 600;
     }
 
     .custom-area__list {
