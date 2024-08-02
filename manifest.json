@@ -4,8 +4,6 @@
     "version": "1.0",
     "description": "Quick assistant for Tutor.com workers who want to check their performance",
     "permissions": [
-        "activeTab",
-        "scripting",
         "storage",
         "tabs"
     ],
@@ -24,9 +22,6 @@
                 "content.js"
             ]
         }
-    ],
-    "host_permissions": [
-        "<all_urls>"
     ],
     "icons": {
         "16": "./assets/images/logo-circ-16.png",

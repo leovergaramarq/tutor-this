@@ -1,9 +1,3 @@
-chrome.runtime.sendMessage({
-    from: "content",
-    subject: "showBillingInfo",
-    data: getBillingInfo()
-});
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.from === "popup" && message.subject === "getBillingInfo") {
         sendResponse({ data: getBillingInfo() });

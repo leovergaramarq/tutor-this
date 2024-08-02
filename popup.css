@@ -19,13 +19,6 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: "Poppins";
-    src: url("assets/fonts/Poppins/Poppins-Bold.ttf") format("truetype");
-    font-weight: 700;
-    font-style: normal;
-}
-
 :root {
     --white: #fff;
     --whitish-1: #fafafa;
@@ -289,7 +282,7 @@ section {
 
 .options-area {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     gap: 24px;
     background-color: var(--color-bg-5);
 

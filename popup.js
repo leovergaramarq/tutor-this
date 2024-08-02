@@ -1,4 +1,5 @@
 import {
+    API_KEY_COOLDOWN_DAYS,
     BILLING_URL,
     DEFAULT_CURRENCY,
     DEFAULT_LOW_SEASON,
@@ -63,7 +64,7 @@ function fetchCurrencyRates() {
             chrome.runtime.sendMessage(
                 { from: "popup", subject: "getApiKey" },
                 async (response) => {
-                    const { apiKey } = response;
+                    const { data: apiKey } = response;
 
                     const getData = (url) => {
                         return new Promise(async (res, rej) => {
@@ -72,7 +73,7 @@ function fetchCurrencyRates() {
                                 const data = await response.json();
 
                                 if (data.result === "success") {
-                                    res(data.conversion_rates);
+                                    res(data);
                                 } else {
                                     rej(
                                         new Error(
@@ -86,18 +87,68 @@ function fetchCurrencyRates() {
                         });
                     };
 
+                    const canUseApiKey = (lastUsedDate) => {
+                        const currentDate = new Date();
+                        const lastUsed = new Date(lastUsedDate);
+                        currentDate.setHours(0, 0, 0, 0);
+                        lastUsed.setHours(0, 0, 0, 0);
+                        const diffDays =
+                            (currentDate - lastUsed) / (1000 * 60 * 60 * 24);
+                        return diffDays >= API_KEY_COOLDOWN_DAYS;
+                    };
+
+                    const lastCurrencyApiReq =
+                        localStorage.getItem("lastCurrencyApiReq");
                     let data;
 
-                    try {
-                        data = await getData("./currencyRates.mock.json");
-                        // data = await getData(
-                        //     `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`
-                        // );
-                    } catch (err) {
-                        data = await getData("./currencyRates.mock.json");
+                    if (
+                        !lastCurrencyApiReq ||
+                        canUseApiKey(+lastCurrencyApiReq)
+                    ) {
+                        console.log("Can use API");
+                        try {
+                            data = await getData(
+                                `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`
+                            );
+
+                            localStorage.setItem(
+                                "lastCurrencyApiReq",
+                                new Date().getTime()
+                            );
+                            localStorage.setItem(
+                                "currencyRates",
+                                JSON.stringify(data)
+                            );
+                        } catch (err) {
+                            data = JSON.parse(
+                                localStorage.getItem("currencyRates")
+                            );
+
+                            if (!data?.conversion_rates) {
+                                data = await getData(
+                                    "./currencyRates.mock.json"
+                                );
+                                localStorage.setItem(
+                                    "currencyRates",
+                                    JSON.stringify(data)
+                                );
+                            }
+                        }
+                    } else {
+                        data = JSON.parse(
+                            localStorage.getItem("currencyRates")
+                        );
+
+                        if (!data?.conversion_rates) {
+                            data = await getData("./currencyRates.mock.json");
+                            localStorage.setItem(
+                                "currencyRates",
+                                JSON.stringify(data)
+                            );
+                        }
                     }
 
-                    res(data);
+                    res(data.conversion_rates);
                 }
             );
         } catch (err) {
