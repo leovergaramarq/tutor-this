@@ -1,31 +1,40 @@
-import { BILLING_URL, THEME_DARK, THEME_LIGHT } from "./constants.js";
+import {
+    BILLING_URL,
+    DEFAULT_CURRENCY,
+    DEFAULT_USD_PER_HOUR,
+    THEME_DARK,
+    THEME_LIGHT
+} from "./constants.js";
 import { hasAncestor } from "./utils.js";
 
 window.addEventListener("DOMContentLoaded", async () => {
     setupTheme();
     setupEvents();
+    setupSavedData();
 
     const tab = await getCurrentTab();
 
-    if (!tab) {
-        $fill.textContent = chrome.runtime?.lastError || "Couldn't get tab";
-        console.log("Couldn't get tab");
-        return;
-    }
-
     if (tab.url === BILLING_URL) {
-        console.log("Billing");
-
         const [billingInfo, currencyRates] = await Promise.all([
             fetchBillingInfo(tab),
             fetchCurrencyRates()
         ]);
+        // document.querySelector(".payment-value").textContent =
+        //     JSON.stringify(billingInfo[0]);
+        const {
+            minutesWaiting,
+            minutesInSession,
+            scheduledHours,
+            onlineHours
+        } = billingInfo[0];
 
-        // data = {
-        //     billingInfo,
-        //     currencyRates
-        // };
-        // storeData(data);
+        // $currency.setAttribute = DEFAULT_CURRENCY;
+        setCurrencyOptions(currencyRates);
+        $scheduledHours.setAttribute("value", scheduledHours);
+        $onlineHours.setAttribute("value", onlineHours);
+        $minutesWaiting.setAttribute("value", minutesWaiting);
+        $minutesInSession.setAttribute("value", minutesInSession);
+        $usdPerHour.setAttribute("value", DEFAULT_USD_PER_HOUR);
     }
 });
 
@@ -38,10 +47,18 @@ async function getCurrentTab() {
 function fetchBillingInfo(tab) {
     return new Promise((res, rej) => {
         try {
+            // setTimeout(() => {
+            //     // console.log("xd");
+            // }, 1000);
+            // chrome.runtime.sendMessage(
+            //     { from: "popup", subject: "getBillingInfo" },
+            //     ({ data }) => res(data)
+            // );
+
             chrome.tabs.sendMessage(
                 tab.id,
-                { from: "popup", subject: "DOMInfo" },
-                (rows) => res(rows)
+                { from: "popup", subject: "getBillingInfo" },
+                ({ data }) => res(data)
             );
         } catch (err) {
             rej(err);
@@ -53,7 +70,7 @@ function fetchCurrencyRates() {
     return new Promise((res, rej) => {
         try {
             chrome.runtime.sendMessage(
-                { type: "getApiKey" },
+                { from: "popup", subject: "getApiKey" },
                 async (response) => {
                     const { apiKey } = response;
 
@@ -98,13 +115,6 @@ function fetchCurrencyRates() {
     });
 }
 
-function setupEvents() {
-    document.addEventListener("click", (e) => {
-        if (hasAncestor(e.target, $optionReset)) handleResetData();
-        if (hasAncestor(e.target, $optionTheme)) handleToggleTheme();
-    });
-}
-
 function setupTheme() {
     theme = localStorage.getItem("theme");
 
@@ -114,6 +124,18 @@ function setupTheme() {
 
     renderTheme();
     localStorage.setItem("theme", theme);
+}
+
+function setupEvents() {
+    document.addEventListener("click", (e) => {
+        if (hasAncestor(e.target, $optionReset)) handleResetData();
+        else if (hasAncestor(e.target, $optionTheme)) handleToggleTheme();
+    });
+}
+
+function setupSavedData() {
+    currency = localStorage.getItem("currency") || DEFAULT_CURRENCY;
+    usdPerHour = localStorage.getItem("usdPerHour") || DEFAULT_USD_PER_HOUR;
 }
 
 function handleToggleTheme() {
@@ -140,16 +162,6 @@ function getOppositeTheme(theme) {
 
 function handleResetData() {}
 
-function getStoredData() {
-    const dataString = localStorage.getItem("data").trim();
-
-    if (!dataString || ["null", "{}", "[]"].includes(data)) {
-        return {};
-    }
-
-    return JSON.parse(dataString);
-}
-
 function storeData(data) {
     localStorage.setItem("data", JSON.stringify(data));
 }
@@ -161,8 +173,24 @@ function getSelectedCurrency() {
     return $sel.getAttribute("value");
 }
 
+function setCurrencyOptions(currencyRates) {
+    $currency.innerHTML = "";
+    const $fragment = document.createDocumentFragment();
+
+    Object.keys(currencyRates).forEach((curr) => {
+        const $option = document.createElement("option");
+        $option.value = curr;
+        $option.text = `${curr} - ${currencyRates[curr].toFixed(1)}`;
+        if (curr === currency) $option.selected = true;
+        $fragment.appendChild($option);
+    });
+
+    $currency.appendChild($fragment);
+}
+
 let theme;
-let data;
+let currency;
+let usdPerHour;
 
 const $currency = document.querySelector(".custom-area .currency select");
 const $scheduledHours = document.querySelector(
