@@ -12,6 +12,7 @@
     --blue-2: #1e90ff;
     --blue-3: #4b85e8;
     --blue-4: #568dee;
+    --blue-5: #e5eaf0;
     --blue-dark-1: #1b1b23;
     --gray-blue-1: #323543;
     --gray-blue-2: #4b4f64;
@@ -26,10 +27,11 @@
 body[theme="light"] {
     --color-primary: var(--blue-1);
     --color-bg-1: var(--whitish-1);
-    --color-bg-2: var(--whitish-2);
+    --color-bg-2: var(--blue-5);
     --color-bg-3: var(--blue-4);
     --color-bg-4: var(--gray-1);
     --color-bg-5: var(--blue-3);
+    --color-bg-6: var(--whitish-1);
     --color-text-1: var(--black-1);
     --color-text-2: var(--black-2);
     --color-util-1: var(--gray-2);
@@ -39,10 +41,11 @@ body[theme="light"] {
 body[theme="dark"] {
     --color-primary: var(--blue-1);
     --color-bg-1: var(--blue-dark-1);
-    --color-bg-2: var(--gray-dark-2);
+    --color-bg-2: var(--blue-dark-1);
     --color-bg-3: var(--gray-blue-1);
     --color-bg-4: var(--gray-blue-2);
     --color-bg-5: var(--gray-blue-2);
+    --color-bg-6: var(--black-2);
     --color-text-1: var(--whitish-2);
     --color-text-2: var(--whitish-1);
     --color-util-1: var(--gray-1);
@@ -50,7 +53,12 @@ body[theme="dark"] {
 }
 
 body {
-    background-color: var(--color-bg-1);
+    /* background-color: var(--color-bg-1); */
+    background: radial-gradient(
+        circle,
+        var(--color-bg-6) 0%,
+        var(--color-bg-2) 100%
+    );
     color: var(--color-text-2);
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
         "Lucida Sans", Arial, sans-serif;
@@ -150,15 +158,18 @@ select:focus {
 }
 
 .container {
-    padding: 16px 24px;
+    padding: 36px 24px 12px 24px;
     max-height: 600px;
     min-width: 256px;
     overflow: hidden auto;
 }
 
-/* main {
-    color: var(--color-text-1);
-} */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-bottom: 16px;
+}
 
 section {
     display: flex;
@@ -175,15 +186,15 @@ section {
     font-size: 1.5rem;
 } */
 
-.section-payment {
+section {
     .section-data {
         position: relative;
 
-        .payment-value {
+        .section-data__value {
             font-size: 1.75rem;
         }
 
-        .payment-currency {
+        .section-data__units {
             font-size: 0.9rem;
             position: absolute;
             right: 0;
@@ -194,7 +205,7 @@ section {
 }
 
 .custom-area {
-    margin-top: 32px;
+    margin-top: 16px;
 
     .custom-area__title {
         font-size: 0.9rem;

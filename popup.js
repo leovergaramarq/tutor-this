@@ -213,24 +213,32 @@ function renderBillingInfo() {
             currencyRates[currency]
         ).toFixed(1)
     );
-    $paymentCurrency.textContent = currency;
+    $paymentUnits.textContent = currency;
+    $onlineTimeValue.textContent = (
+        (onlineHours / scheduledHours) *
+        100
+    ).toFixed(1);
+    $timeWorkedValue.textContent = (
+        (minutesInSession + minutesWaiting) /
+        60
+    ).toFixed(1);
 }
 
 function getBonus(minutesWaiting, minutesInSession) {
     const hours = (minutesInSession + minutesWaiting) / 60;
 
     if (lowSeason) {
-        if (hours < 30) return 0;
-        if (hours < 60) return 40;
-        if (hours < 90) return 70;
-        if (hours < 120) return 100;
-
-        return 140;
-    } else {
         if (hours < 25) return 0;
         if (hours < 50) return 40;
         if (hours < 75) return 70;
         if (hours < 100) return 100;
+
+        return 140;
+    } else {
+        if (hours < 30) return 0;
+        if (hours < 60) return 40;
+        if (hours < 90) return 70;
+        if (hours < 120) return 100;
 
         return 140;
     }
@@ -243,8 +251,12 @@ let lowSeason;
 let currencyRates;
 
 const $paymentValue = document.querySelector(".section-payment .payment-value");
-const $paymentCurrency = document.querySelector(
-    ".section-payment .payment-currency"
+const $paymentUnits = document.querySelector(".section-payment .payment-units");
+const $onlineTimeValue = document.querySelector(
+    ".section-online-time .online-time-value"
+);
+const $timeWorkedValue = document.querySelector(
+    ".section-time-worked .time-worked-value"
 );
 
 const $currency = document.querySelector(".custom-area .currency select");
