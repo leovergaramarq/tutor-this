@@ -1,9 +1,216 @@
+:root {
+    --white: #fff;
+    --whitish-1: #fafafa;
+    --whitish-2: #efefef;
+    --whitish-3: #e0e0e0;
+    --gray-1: #cfcfcf;
+    --gray-2: #aeaeae;
+    --black: #000;
+    --black-1: #1e1e1e;
+    --black-2: #333333;
+    --blue-1: #0086fe;
+    --blue-2: #1e90ff;
+    --blue-3: #568ff4;
+    --blue-4: #4d81dc;
+    --blue-dark-1: #1b1b23;
+    --gray-blue-1: #323543;
+    --gray-blue-2: #4b4f64;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-* {
-    color: white;
+body[theme="light"] {
+    --color-primary: var(--blue-1);
+    --color-bg-1: var(--whitish-1);
+    --color-bg-2: var(--whitish-2);
+    --color-bg-3: var(--blue-4);
+    --color-bg-4: var(--gray-1);
+    --color-bg-5: var(--blue-3);
+    --color-text-1: var(--black-1);
+    --color-text-2: var(--black-2);
+    --color-util-1: var(--gray-2);
+    --color-util-2: var(--black-1);
+}
+
+body[theme="dark"] {
+    --color-primary: var(--blue-1);
+    --color-bg-1: var(--blue-dark-1);
+    --color-bg-2: var(--gray-dark-2);
+    --color-bg-3: var(--gray-blue-1);
+    --color-bg-4: var(--gray-blue-2);
+    --color-bg-5: var(--gray-blue-2);
+    --color-text-1: var(--whitish-2);
+    --color-text-2: var(--whitish-1);
+    --color-util-1: var(--gray-1);
+    --color-util-2: var(--whitish-2);
+}
+
+body {
+    background-color: var(--color-bg-1);
+    color: var(--color-text-2);
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif;
+}
+
+/* https://stackoverflow.com/a/2310809/20250972 */
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* https://chatgpt.com/ */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+    width: 100%;
+    padding: 2px 4px;
+    border: 1px solid var(--color-util-1);
+    border-radius: 2px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 1px var(--color-primary);
+    outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+select {
+    width: 100%;
+    padding: 2px 4px;
+    border: 1px solid var(--color-util-1);
+    border-radius: 2px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 1px var(--color-primary);
+    outline: none;
+}
+
+.container {
+    padding: 16px 24px;
+    max-height: 600px;
+    min-width: 256px;
+    overflow: hidden auto;
+}
+
+main {
+    color: var(--color-text-1);
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.section-title {
+    font-size: 1rem;
+}
+
+/* .section-data {
+    font-size: 1.5rem;
+} */
+
+.section-payment {
+    .payment-value {
+        font-size: 1.5rem;
+    }
+
+    .payment-currency {
+        font-size: 1rem;
+    }
+}
+
+.custom-area {
+    margin-top: 32px;
+
+    .custom-area__title {
+        font-size: 0.9rem;
+    }
+
+    .custom-area__list {
+        padding: 0 12px;
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .custom-field {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+
+            & > * {
+                flex-grow: 1;
+            }
+
+            * {
+                font-size: 0.75rem;
+            }
+
+            span {
+                width: min-content;
+            }
+
+            input,
+            select {
+                max-width: 64px;
+            }
+        }
+    }
+}
+
+.options-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    background-color: var(--color-bg-5);
+
+    .option {
+        cursor: pointer;
+        padding: 8px 16px;
+
+        &:hover {
+            background-color: var(--color-bg-3);
+        }
+
+        div {
+            width: 24px;
+            height: 24px;
+            position: relative;
+
+            img {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+    }
 }

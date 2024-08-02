@@ -3,11 +3,86 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="reset.css" />
         <link rel="stylesheet" href="popup.css" />
         <title>Tutor This</title>
     </head>
-    <body>
-        <div class="fill"></div>
+    <body theme="dark">
+        <div class="container">
+            <main>
+                <section class="section-payment">
+                    <div class="section-title">Payment</div>
+                    <div class="section-data">
+                        <span class="payment-value"></span
+                        ><span class="payment-currency"></span>
+                    </div>
+                </section>
+            </main>
+            <div class="custom-area">
+                <div class="custom-area__title">Custom values</div>
+                <div class="custom-area__list">
+                    <div class="custom-field currency">
+                        <span>Currency:</span>
+                        <select></select>
+                    </div>
+                    <div
+                        class="custom-field scheduled-hours"
+                        title="Hours that you scheduled in Schedule Manager"
+                    >
+                        <span>Scheduled hours:</span>
+                        <input type="number" min="0" />
+                    </div>
+                    <div
+                        class="custom-field online-hours"
+                        title="Hours online from the scheduled hours"
+                    >
+                        <span>Online hours:</span>
+                        <input type="number" min="0" />
+                    </div>
+                    <div
+                        class="custom-field minutes-waiting"
+                        title="Minutes waiting from the scheduled hours"
+                    >
+                        <span>Minutes waiting:</span>
+                        <input type="number" min="0" />
+                    </div>
+                    <div
+                        class="custom-field minutes-in-session"
+                        title="Minutes worked in any session"
+                    >
+                        <span>Minutes in session:</span>
+                        <input type="number" min="0" />
+                    </div>
+                    <div
+                        class="custom-field usd-per-hour"
+                        title="USD earned per hour in session"
+                    >
+                        <span>USD per hour:</span>
+                        <input type="number" min="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="options-area">
+            <span class="option option-reset" title="Reset data">
+                <div>
+                    <img
+                        class="unselectable"
+                        src="./assets/icons/reset-dark.svg"
+                        alt="Reset"
+                    />
+                </div>
+            </span>
+            <span class="option option-theme" title="Toggle theme">
+                <div>
+                    <img
+                        class="unselectable"
+                        src="./assets/icons/theme-dark.svg"
+                        alt="Toggle theme"
+                    />
+                </div>
+            </span>
+        </div>
         <script src="popup.js" type="module"></script>
     </body>
 </html>
