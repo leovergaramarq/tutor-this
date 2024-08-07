@@ -24,3 +24,5 @@ Currently, Tutor This is not available in the Chrome Web Store. You can add it t
    <img src="https://github.com/user-attachments/assets/90f89783-5831-47b2-a7cd-ab32820639aa">
 
 6. Browse and select the downloaded/unzipped folder.
+
+The extension will be ready for you to use it.
