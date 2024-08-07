@@ -4,7 +4,6 @@
     "version": "1.0",
     "description": "Quick assistant for Tutor.com workers who want to check their performance",
     "permissions": [
-        "storage",
         "tabs"
     ],
     "background": {
