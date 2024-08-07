@@ -2,7 +2,7 @@
 
 <img src="https://github.com/user-attachments/assets/61db7401-22cb-40bf-bb8b-de02e4a37dcd" height="100">
 
-Chrome extension to assist Tutor.com workers who want to check their billing information in a easy and quick way.
+Chrome extension to assist Tutor.com workers who want to check their billing information in an easy and quick way.
 
 The extension is opened as a popup in the [Billing Information](https://prv.tutor.com/nGEN/Apps/SocWinSupportingPages/Provider/BillingInfo.aspx?ProgramGUID=b611858b-4d02-4afe-8053-d082bbc1c58e) page, available for Tutor.com workers.
 
