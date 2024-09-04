@@ -7,26 +7,53 @@ import {
     THEME_DARK,
     THEME_LIGHT
 } from "./constants.js";
+import {
+    containerHtml,
+    errorHtml,
+    optionResetHtml,
+    optionsAreaHtml,
+    pageHtml,
+    wrongSiteHtml
+} from "./htmlComponents.js";
 import { hasAncestor, numberWithCommas } from "./utils.js";
 
 window.addEventListener("DOMContentLoaded", async () => {
+    setupOptionsArea();
     setupTheme();
-    setupEvents();
-    setupSavedData();
 
-    const tab = await getCurrentTab();
+    let tab;
+    try {
+        tab = await getCurrentTab();
+    } catch (err) {
+        setupErrorHtml(errorHtml);
+        return;
+    }
 
     if (tab.url === BILLING_URL) {
-        const result = await Promise.all([
-            fetchBillingInfo(tab),
-            fetchCurrencyRates()
-        ]);
+        let result;
+
+        try {
+            result = await Promise.all([
+                fetchBillingInfo(tab),
+                fetchCurrencyRates()
+            ]);
+        } catch (err) {
+            setupErrorHtml(errorHtml);
+            return;
+        }
 
         billingInfo = result[0];
         currencyRates = result[1];
 
+        setupSavedData();
+        setupBillingHtml();
+        setupReferences();
+
         setCustomValues();
+        renderMonthPage();
         renderBillingInfo();
+    } else {
+        setupErrorHtml(errorHtml);
     }
 });
 
@@ -168,14 +195,70 @@ function setupTheme() {
     localStorage.setItem("theme", theme);
 }
 
-function setupEvents() {
+function setupOptionsArea() {
+    document.body.insertAdjacentHTML("afterbegin", optionsAreaHtml);
+    $optionTheme = document.querySelector(".options-area .option-theme");
+
     document.addEventListener("click", (e) => {
         if (hasAncestor(e.target, $optionReset)) handleResetData();
         else if (hasAncestor(e.target, $optionTheme)) handleToggleTheme();
     });
+}
+
+function setupBillingHtml() {
+    document.body.insertAdjacentHTML("afterbegin", containerHtml);
+    document
+        .querySelector(".options-area")
+        .insertAdjacentHTML("afterbegin", optionResetHtml);
     document
         .querySelector(".custom-area")
         .addEventListener("change", handleCustomAreaChange);
+
+    const $pages = document.querySelector(".pages");
+    $pages.addEventListener("click", handlePagesClick);
+
+    $pagesList = $pages.querySelector("ul");
+    billingInfo.forEach(() =>
+        $pagesList.insertAdjacentHTML("beforeend", pageHtml)
+    );
+
+    page = 0;
+    sliding = false;
+}
+
+function setupReferences() {
+    $month = document.querySelector(".month");
+    // $pagesList = $pages.querySelector(".pages ul");
+    $pageArrows = document.querySelectorAll(".pages-arrow");
+    $paymentValue = document.querySelectorAll(
+        ".section-payment .payment-value"
+    );
+    $paymentUnits = document.querySelectorAll(
+        ".section-payment .payment-units"
+    );
+    $onlineTimeValue = document.querySelectorAll(
+        ".section-online-time .online-time-value"
+    );
+    $timeWorkedValue = document.querySelectorAll(
+        ".section-time-worked .time-worked-value"
+    );
+
+    $currency = document.querySelector(".custom-area .currency select");
+    $scheduledHours = document.querySelector(
+        ".custom-area .scheduled-hours input"
+    );
+    $onlineHours = document.querySelector(".custom-area .online-hours input");
+    $minutesWaiting = document.querySelector(
+        ".custom-area .minutes-waiting input"
+    );
+    $minutesInSession = document.querySelector(
+        ".custom-area .minutes-in-session input"
+    );
+    $usdPerHour = document.querySelector(".custom-area .usd-per-hour input");
+    $lowSeason = document.querySelector(".custom-area .low-season input");
+
+    $optionReset = document.querySelector(".options-area .option-reset");
+    // $optionTheme = document.querySelector(".options-area .option-theme");
 }
 
 function setupSavedData() {
@@ -213,6 +296,57 @@ function handleCustomAreaChange(e) {
     renderBillingInfo();
 }
 
+function handlePagesClick(e) {
+    const render = () => {
+        setCustomValues({ renderCurrency: false });
+        renderMonthPage();
+        renderBillingInfo();
+    };
+
+    if (hasAncestor(e.target, $pageArrows[0]) && page > 0 && movePage(-1)) {
+        page--;
+        render();
+    } else if (
+        hasAncestor(e.target, $pageArrows[1]) &&
+        page < billingInfo.length - 1 &&
+        movePage(1)
+    ) {
+        page++;
+        render();
+    }
+}
+
+function movePage(dir) {
+    if (sliding) {
+        return;
+    }
+
+    sliding = true;
+    const transitionDuration = 500;
+
+    if (dir < 0) {
+        const $last = $pagesList.lastElementChild;
+        $pagesList.insertAdjacentElement("afterbegin", $last);
+        $last.style.animation = `slide-right ${transitionDuration}ms`;
+
+        setTimeout(() => {
+            $last.style.animation = "none";
+            sliding = false;
+        }, transitionDuration);
+    } else {
+        const $first = $pagesList.firstElementChild;
+        $first.style.animation = `slide-left ${transitionDuration}ms`;
+
+        setTimeout(() => {
+            $pagesList.insertAdjacentElement("beforeend", $first);
+            $first.style.animation = "none";
+            sliding = false;
+        }, transitionDuration);
+    }
+
+    return true;
+}
+
 function renderTheme() {
     document.body.setAttribute("theme", theme);
 
@@ -230,7 +364,7 @@ function getOppositeTheme(theme) {
 }
 
 function handleResetData() {
-    setCustomValues(false);
+    setCustomValues({ renderCurrency: false });
     renderBillingInfo();
 }
 
@@ -249,9 +383,9 @@ function renderCurrencyOptions(currencyRates) {
     $currency.appendChild($fragment);
 }
 
-function setCustomValues(renderCurrency = true) {
+function setCustomValues({ renderCurrency } = { renderCurrency: true }) {
     const { minutesWaiting, minutesInSession, scheduledHours, onlineHours } =
-        billingInfo[0];
+        billingInfo[page];
 
     if (renderCurrency) renderCurrencyOptions(currencyRates);
     $scheduledHours.value = scheduledHours;
@@ -262,6 +396,21 @@ function setCustomValues(renderCurrency = true) {
     $lowSeason.checked = lowSeason;
 }
 
+function renderMonthPage() {
+    $month.textContent = billingInfo[page].month;
+    if (page === 0) {
+        $pageArrows[0].classList.remove("available");
+    } else {
+        $pageArrows[0].classList.add("available");
+    }
+
+    if (page === billingInfo.length - 1) {
+        $pageArrows[1].classList.remove("available");
+    } else {
+        $pageArrows[1].classList.add("available");
+    }
+}
+
 function renderBillingInfo() {
     const scheduledHours = +$scheduledHours.value;
     const onlineHours = +$onlineHours.value;
@@ -269,21 +418,21 @@ function renderBillingInfo() {
     const minutesInSession = +$minutesInSession.value;
     const bonus = getBonus(minutesWaiting, minutesInSession);
 
-    $paymentValue.textContent = numberWithCommas(
+    $paymentValue[page].textContent = numberWithCommas(
         (
             ((minutesWaiting * 2.5 + minutesInSession * usdPerHour) / 60 +
                 bonus) *
             currencyRates[currency]
         ).toFixed(1)
     );
-    $paymentUnits.textContent = currency;
+    $paymentUnits[page].textContent = currency;
 
-    $onlineTimeValue.textContent = (
+    $onlineTimeValue[page].textContent = (
         (onlineHours / scheduledHours) *
         100
     ).toFixed(1);
 
-    $timeWorkedValue.textContent = (
+    $timeWorkedValue[page].textContent = (
         (minutesInSession + minutesWaiting) /
         60
     ).toFixed(1);
@@ -309,35 +458,34 @@ function getBonus(minutesWaiting, minutesInSession) {
     }
 }
 
+function setupErrorHtml(html) {
+    document.body.insertAdjacentHTML("afterbegin", html);
+}
+
 let theme;
 let currency;
 let usdPerHour;
 let lowSeason;
 let billingInfo;
 let currencyRates;
+let page;
+let sliding;
 
-const $paymentValue = document.querySelector(".section-payment .payment-value");
-const $paymentUnits = document.querySelector(".section-payment .payment-units");
-const $onlineTimeValue = document.querySelector(
-    ".section-online-time .online-time-value"
-);
-const $timeWorkedValue = document.querySelector(
-    ".section-time-worked .time-worked-value"
-);
+let $month;
+let $pagesList;
+let $pageArrows;
+let $paymentValue;
+let $paymentUnits;
+let $onlineTimeValue;
+let $timeWorkedValue;
 
-const $currency = document.querySelector(".custom-area .currency select");
-const $scheduledHours = document.querySelector(
-    ".custom-area .scheduled-hours input"
-);
-const $onlineHours = document.querySelector(".custom-area .online-hours input");
-const $minutesWaiting = document.querySelector(
-    ".custom-area .minutes-waiting input"
-);
-const $minutesInSession = document.querySelector(
-    ".custom-area .minutes-in-session input"
-);
-const $usdPerHour = document.querySelector(".custom-area .usd-per-hour input");
-const $lowSeason = document.querySelector(".custom-area .low-season input");
+let $currency;
+let $scheduledHours;
+let $onlineHours;
+let $minutesWaiting;
+let $minutesInSession;
+let $usdPerHour;
+let $lowSeason;
 
-const $optionReset = document.querySelector(".options-area .option-reset");
-const $optionTheme = document.querySelector(".options-area .option-theme");
+let $optionReset;
+let $optionTheme;

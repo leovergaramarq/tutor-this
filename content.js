@@ -8,7 +8,11 @@ function getBillingInfo() {
     const $rows = Array.from(
         document.querySelectorAll('table tbody tr[valign="top"]')
     );
+
     return $rows.map(($row) => ({
+        month: new Date($row.children[0].textContent.split(" ")[0])
+            .toLocaleDateString("en-US", { year: "numeric", month: "long" })
+            .replace(/\s/, ", "),
         scheduledHours: +$row.children[2].textContent,
         onlineHours: +$row.children[3].textContent,
         minutesWaiting: +$row.children[8].textContent.replace(/,/g, ""),
