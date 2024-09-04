@@ -53,7 +53,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         renderMonthPage();
         renderBillingInfo();
     } else {
-        setupErrorHtml(errorHtml);
+        setupErrorHtml(wrongSiteHtml);
     }
 });
 
